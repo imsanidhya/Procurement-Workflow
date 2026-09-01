@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Query History - {{ req.request_number }}
+    </title>
+
+    <style>
+
+        /* =====================================================
+           ROOT / APPLICATION COLORS
+           ===================================================== */
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+
+            --info: #0284c7;
+            --info-bg: #e0f2fe;
+
+            --dark: #0f172a;
+            --text: #334155;
+            --muted: #64748b;
+
+            --border: #dbe3ef;
+            --border-light: #e8edf4;
+
+            --background: #f5f7fb;
+            --card: #ffffff;
+
+            --shadow:
+                0 3px 12px rgba(15, 23, 42, 0.07);
+
+            --radius: 10px;
+        }
+
+
+        /* =====================================================
+           GLOBAL
+           ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+
+            background:
+                var(--background);
+
+            color:
+                var(--text);
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+
+        /* =====================================================
+           PAGE WRAPPER
+           ===================================================== */
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 1180px;
+
+            margin: 0 auto;
+
+            padding:
+                18px 18px 28px;
+        }
+
+
+        /* =====================================================
+           TOP HEADER
+           ===================================================== */
+
+        .page-header {
+            background: var(--card);
+
+            border:
+                1px solid var(--border);
+
+            border-left:
+                4px solid var(--primary);
+
+            border-radius:
+                var(--radius);
+
+            box-shadow:
+                var(--shadow);
+
+            padding:
+                12px 16px;
+
+            margin-bottom: 10px;
+        }
+
+        .page-header-row {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap: 12px;
+        }
+
+        .page-title {
+            margin: 0;
+
+            color:
+                var(--dark);
+
+            font-size: 19px;
+
+            font-weight: 700;
+
+            letter-spacing:
+                .2px;
+        }
+
+        .request-number {
+            margin-top: 2px;
+
+            color:
+                var(--muted);
+
+            font-size: 12px;
+        }
+
+        .request-number strong {
+            color:
+                var(--primary);
+        }
+
+
+        /* =====================================================
+           HEADER ACTIONS
+           ===================================================== */
+
+        .header-actions {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            flex-shrink: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            padding:
+                7px 11px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            transition:
+                background .15s ease,
+                transform .1s ease;
+        }
+
+        .btn:hover {
+            transform:
+                translateY(-1px);
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background:
+                var(--primary-dark);
+        }
+
+        .btn-secondary {
+            color:
+                var(--dark);
+
+            background:
+                #eef2f7;
+
+            border:
+                1px solid var(--border);
+        }
+
+        .btn-success {
+            color: #fff;
+            background: var(--success);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background: var(--danger);
+        }
+
+
+        /* =====================================================
+           MAIN SECTION CARD
+           ===================================================== */
+
+        .section {
+            background:
+                var(--card);
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                var(--radius);
+
+            box-shadow:
+                var(--shadow);
+
+            margin-bottom:
+                10px;
+
+            overflow:
+                hidden;
+        }
+
+        .section-header {
+            display: flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap: 10px;
+
+            padding:
+                9px 13px;
+
+            background:
+                #f8fafc;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .section-title {
+            margin: 0;
+
+            color:
+                var(--dark);
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing:
+                .55px;
+
+            text-transform:
+                uppercase;
+        }
+
+        .section-body {
+            padding:
+                11px 13px;
+        }
+
+
+        /* =====================================================
+           REQUESTER INFORMATION
+           ===================================================== */
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap:
+                7px 18px;
+        }
+
+        .info-item {
+            min-width: 0;
+        }
+
+        .info-label {
+            display: block;
+
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .35px;
+
+            margin-bottom:
+                1px;
+        }
+
+        .info-value {
+            color:
+                var(--dark);
+
+            font-size:
+                12px;
+
+            font-weight:
+                500;
+
+            word-break:
+                break-word;
+        }
+
+
+        /* =====================================================
+           REQUEST DETAILS
+           ===================================================== */
+
+        .details-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr 1fr;
+
+            gap:
+                7px 18px;
+
+            margin-bottom:
+                9px;
+        }
+
+        .detail-box {
+            padding:
+                7px 9px;
+
+            background:
+                #f8fafc;
+
+            border:
+                1px solid var(--border-light);
+
+            border-radius:
+                7px;
+        }
+
+        .detail-label {
+            display: block;
+
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+            margin-bottom:
+                2px;
+
+            text-transform:
+                uppercase;
+        }
+
+        .detail-value {
+            color:
+                var(--dark);
+
+            font-size:
+                12px;
+
+            font-weight:
+                600;
+
+            word-break:
+                break-word;
+        }
+
+        .description-box {
+            margin-top:
+                7px;
+
+            padding:
+                8px 10px;
+
+            background:
+                #f8fafc;
+
+            border:
+                1px solid var(--border-light);
+
+            border-radius:
+                7px;
+        }
+
+        .description-label {
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+            text-transform:
+                uppercase;
+
+            margin-bottom:
+                3px;
+        }
+
+        .description-content {
+            color:
+                var(--text);
+
+            font-size:
+                12px;
+
+            white-space:
+                pre-wrap;
+
+            word-break:
+                break-word;
+
+            max-height:
+                100px;
+
+            overflow-y:
+                auto;
+        }
+
+
+        /* =====================================================
+           STATUS BADGES
+           ===================================================== */
+
+        .status-badge {
+            display: inline-flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                3px 8px;
+
+            border-radius:
+                999px;
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .25px;
+        }
+
+        .status-open {
+            color:
+                #92400e;
+
+            background:
+                var(--warning-bg);
+        }
+
+        .status-responded {
+            color:
+                #075985;
+
+            background:
+                var(--info-bg);
+        }
+
+        .status-closed {
+            color:
+                #166534;
+
+            background:
+                var(--success-bg);
+        }
+
+        .status-submitted {
+            color:
+                #1e40af;
+
+            background:
+                #dbeafe;
+        }
+
+        .status-approved {
+            color:
+                #166534;
+
+            background:
+                var(--success-bg);
+        }
+
+        .status-returned {
+            color:
+                #991b1b;
+
+            background:
+                var(--danger-bg);
+        }
+
+        .status-query {
+            color:
+                #075985;
+
+            background:
+                var(--info-bg);
+        }
+
+
+        /* =====================================================
+           QUERY THREAD
+           ===================================================== */
+
+        .query-thread {
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                8px;
+
+            margin-bottom:
+                9px;
+
+            overflow:
+                hidden;
+
+            background:
+                #fff;
+        }
+
+        .query-thread:last-child {
+            margin-bottom:
+                0;
+        }
+
+        .query-header {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            padding:
+                8px 10px;
+
+            background:
+                #f8fafc;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .query-number {
+            color:
+                var(--dark);
+
+            font-size:
+                12px;
+
+            font-weight:
+                800;
+        }
+
+        .query-meta {
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+        }
+
+
+        /* =====================================================
+           MESSAGE
+           ===================================================== */
+
+        .message {
+            padding:
+                9px 10px;
+
+            border-bottom:
+                1px solid var(--border-light);
+        }
+
+        .message:last-child {
+            border-bottom:
+                none;
+        }
+
+        .message-top {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            margin-bottom:
+                4px;
+        }
+
+        .message-direction {
+            color:
+                var(--dark);
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+        }
+
+        .message-direction .arrow {
+            color:
+                var(--primary);
+
+            padding:
+                0 4px;
+        }
+
+        .message-date {
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+
+            white-space:
+                nowrap;
+        }
+
+        .message-person {
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+
+            margin-bottom:
+                3px;
+        }
+
+        .message-text {
+            color:
+                var(--text);
+
+            font-size:
+                12px;
+
+            line-height:
+                1.45;
+
+            white-space:
+                pre-wrap;
+
+            word-break:
+                break-word;
+        }
+
+
+        /* =====================================================
+           RESPONSE BOX
+           ===================================================== */
+
+        .response-box {
+            margin:
+                8px 10px 10px;
+
+            padding:
+                10px;
+
+            border:
+                1px solid #bfdbfe;
+
+            border-radius:
+                8px;
+
+            background:
+                #eff6ff;
+        }
+
+        .response-title {
+            color:
+                #1e3a8a;
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            margin-bottom:
+                6px;
+        }
+
+        .response-form textarea {
+            width:
+                100%;
+
+            min-height:
+                55px;
+
+            max-height:
+                100px;
+
+            resize:
+                vertical;
+
+            padding:
+                7px 9px;
+
+            border:
+                1px solid #cbd5e1;
+
+            border-radius:
+                6px;
+
+            background:
+                #fff;
+
+            color:
+                var(--dark);
+
+            font-family:
+                inherit;
+
+            font-size:
+                12px;
+
+            outline:
+                none;
+        }
+
+        .response-form textarea:focus {
+            border-color:
+                var(--primary);
+
+            box-shadow:
+                0 0 0 2px
+                rgba(37, 99, 235, .10);
+        }
+
+        .response-actions {
+            display: flex;
+
+            justify-content:
+                flex-end;
+
+            margin-top:
+                6px;
+        }
+
+
+        /* =====================================================
+           APPROVER RESPONSE + CLOSE SECTION
+           ===================================================== */
+
+        .approver-action-box {
+            margin:
+                8px 10px 10px;
+
+            padding:
+                10px;
+
+            border:
+                1px solid #c7d2fe;
+
+            border-radius:
+                8px;
+
+            background:
+                #eef2ff;
+        }
+
+        .approver-action-title {
+            color:
+                #3730a3;
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            margin-bottom:
+                5px;
+        }
+
+        .approver-action-description {
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+
+            margin-bottom:
+                7px;
+        }
+
+        .close-action {
+            display: flex;
+
+            justify-content:
+                flex-end;
+
+            align-items:
+                center;
+
+            gap:
+                7px;
+
+            margin-top:
+                7px;
+
+            padding-top:
+                7px;
+
+            border-top:
+                1px solid #c7d2fe;
+        }
+
+
+        /* =====================================================
+           NO QUERY
+           ===================================================== */
+
+        .empty-state {
+            text-align:
+                center;
+
+            padding:
+                18px 10px;
+
+            color:
+                var(--muted);
+        }
+
+        .empty-state-title {
+            color:
+                var(--dark);
+
+            font-size:
+                13px;
+
+            font-weight:
+                700;
+
+            margin-bottom:
+                3px;
+        }
+
+        .empty-state-text {
+            font-size:
+                11px;
+        }
+
+
+        /* =====================================================
+           APPROVAL HISTORY
+           ===================================================== */
+
+        .table-wrapper {
+            width:
+                100%;
+
+            overflow-x:
+                auto;
+        }
+
+        .history-table {
+            width:
+                100%;
+
+            border-collapse:
+                collapse;
+
+            font-size:
+                11px;
+        }
+
+        .history-table th {
+            background:
+                #f8fafc;
+
+            color:
+                var(--muted);
+
+            text-align:
+                left;
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .3px;
+
+            padding:
+                7px 8px;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .history-table td {
+            padding:
+                7px 8px;
+
+            border-bottom:
+                1px solid var(--border-light);
+
+            color:
+                var(--text);
+
+            vertical-align:
+                top;
+        }
+
+        .history-table tr:last-child td {
+            border-bottom:
+                none;
+        }
+
+
+        /* =====================================================
+           ATTACHMENTS
+           ===================================================== */
+
+        .attachments {
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                5px;
+        }
+
+        .attachment {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                5px;
+
+            padding:
+                5px 8px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                6px;
+
+            background:
+                #f8fafc;
+
+            color:
+                var(--primary);
+
+            font-size:
+                10px;
+
+            text-decoration:
+                none;
+        }
+
+        .attachment:hover {
+            background:
+                #eff6ff;
+        }
+
+
+        /* =====================================================
+           FLASH MESSAGES
+           ===================================================== */
+
+        .flash-container {
+            margin-bottom:
+                10px;
+        }
+
+        .flash {
+            padding:
+                8px 10px;
+
+            border-radius:
+                7px;
+
+            margin-bottom:
+                5px;
+
+            font-size:
+                11px;
+
+            border:
+                1px solid transparent;
+        }
+
+        .flash-success {
+            color:
+                #166534;
+
+            background:
+                var(--success-bg);
+
+            border-color:
+                #bbf7d0;
+        }
+
+        .flash-danger {
+            color:
+                #991b1b;
+
+            background:
+                var(--danger-bg);
+
+            border-color:
+                #fecaca;
+        }
+
+        .flash-warning {
+            color:
+                #92400e;
+
+            background:
+                var(--warning-bg);
+
+            border-color:
+                #fde68a;
+        }
+
+        .flash-info {
+            color:
+                #075985;
+
+            background:
+                var(--info-bg);
+
+            border-color:
+                #bae6fd;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 850px) {
+
+            .info-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .details-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            body {
+                font-size:
+                    12px;
+            }
+
+            .page-wrapper {
+                padding:
+                    10px;
+            }
+
+            .page-header-row {
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+            }
+
+            .header-actions {
+                width:
+                    100%;
+            }
+
+            .header-actions .btn {
+                flex:
+                    1;
+            }
+
+            .info-grid,
+            .details-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .section-body {
+                padding:
+                    9px;
+            }
+
+            .query-header {
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+            }
+
+            .message-top {
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
+                gap:
+                    2px;
+            }
+
+            .close-action {
+                align-items:
+                    stretch;
+
+                flex-direction:
+                    column;
+            }
+
+            .close-action .btn {
+                width:
+                    100%;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="page-wrapper">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="page-header">
+
+        <div class="page-header-row">
+
+            <div>
+
+                <h1 class="page-title">
+                    QUERY HISTORY
+                </h1>
+
+                <div class="request-number">
+                    Request Number:
+                    <strong>
+                        {{ req.request_number }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <a
+                    href="{{ dashboard_url }}"
+                    class="btn btn-secondary"
+                >
+                    ← Dashboard
+                </a>
+
+                {% if user_role == "APPROVER" %}
+
+                    <a
+                        href="{{ review_url }}"
+                        class="btn btn-primary"
+                    >
+                        Review Request
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FLASH MESSAGES
+         ===================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="flash
+                        {% if category == 'success' %}
+                            flash-success
+                        {% elif category == 'danger' %}
+                            flash-danger
+                        {% elif category == 'warning' %}
+                            flash-warning
+                        {% else %}
+                            flash-info
+                        {% endif %}"
+                    >
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+
+    <!-- =====================================================
+         REQUESTER INFORMATION
+         ===================================================== -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2 class="section-title">
+                Requester Information
+            </h2>
+
+        </div>
+
+
+        <div class="section-body">
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Name
+                    </span>
+
+                    <span class="info-value">
+                        {{ req.requester_name or "—" }}
+                    </span>
+                </div>
+
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Email
+                    </span>
+
+                    <span class="info-value">
+                        {{ req.requester_email or "—" }}
+                    </span>
+                </div>
+
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Employee ID
+                    </span>
+
+                    <span class="info-value">
+                        {{ req.employee_id or "—" }}
+                    </span>
+                </div>
+
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Department
+                    </span>
+
+                    <span class="info-value">
+                        {{ req.department or "—" }}
+                    </span>
+                </div>
+
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Designation
+                    </span>
+
+                    <span class="info-value">
+                        {{ req.designation or "—" }}
+                    </span>
+                </div>
+
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Request Date
+                    </span>
+
+                    <span class="info-value">
+                        {{ req.request_date or "—" }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         REQUEST DETAILS
+         ===================================================== -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2 class="section-title">
+                Request Details
+            </h2>
+
+        </div>
+
+
+        <div class="section-body">
+
+            <div class="details-grid">
+
+                <div class="detail-box">
+
+                    <span class="detail-label">
+                        Request No.
+                    </span>
+
+                    <span class="detail-value">
+                        {{ req.request_number }}
+                    </span>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <span class="detail-label">
+                        Status
+                    </span>
+
+                    <span class="detail-value">
+
+                        {% set request_status =
+                            (req.status or "")|upper
+                        %}
+
+                        <span
+                            class="status-badge
+                            {% if request_status == 'APPROVED' %}
+                                status-approved
+                            {% elif request_status == 'RETURNED' %}
+                                status-returned
+                            {% elif request_status == 'QUERY' %}
+                                status-query
+                            {% elif request_status == 'SUBMITTED' %}
+                                status-submitted
+                            {% else %}
+                                status-open
+                            {% endif %}"
+                        >
+                            {{ req.status or "—" }}
+                        </span>
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <span class="detail-label">
+                        Created
+                    </span>
+
+                    <span class="detail-value">
+
+                        {% if req.created_at %}
+                            {{ req.created_at.strftime("%d-%m-%Y %H:%M") }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="description-box">
+
+                <div class="description-label">
+                    Item / Requirement Description
+                </div>
+
+                <div class="description-content">
+                    {{ req.item_description or "—" }}
+                </div>
+
+            </div>
+
+
+            <div class="description-box">
+
+                <div class="description-label">
+                    Business Requirement
+                </div>
+
+                <div class="description-content">
+                    {{ req.business_requirement or "—" }}
+                </div>
+
+            </div>
+
+
+            <div class="description-box">
+
+                <div class="description-label">
+                    BOQ
+                </div>
+
+                <div class="description-content">
+                    {{ req.boq or "—" }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         QUERIES & RESPONSES
+         ===================================================== -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2 class="section-title">
+                Queries & Responses
+            </h2>
+
+            {% if active_queries %}
+
+                <span class="status-badge status-open">
+                    {{ active_queries|length }} Active
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="section-body">
+
+
+            {% if query_threads %}
+
+
+                {% for thread in query_threads %}
+
+                    {% set root = thread.root %}
+
+                    {% set thread_status =
+                        (root.status or "")|upper
+                    %}
+
+
+                    <div class="query-thread">
+
+
+                        <!-- QUERY HEADER -->
+
+                        <div class="query-header">
+
+                            <div>
+
+                                <div class="query-number">
+                                    Query #{{ root.id }}
+                                </div>
+
+                                {% if root.created_at %}
+
+                                    <div class="query-meta">
+
+                                        Raised:
+
+                                        {{ root.created_at.strftime(
+                                            "%d-%m-%Y %H:%M"
+                                        ) }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <span
+                                class="status-badge
+                                {% if thread_status == 'OPEN' %}
+                                    status-open
+                                {% elif thread_status == 'RESPONDED' %}
+                                    status-responded
+                                {% elif thread_status == 'CLOSED' %}
+                                    status-closed
+                                {% else %}
+                                    status-open
+                                {% endif %}"
+                            >
+                                {{ root.status or "OPEN" }}
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- THREAD MESSAGES -->
+
+                        {% for message in thread.messages %}
+
+                            <div class="message">
+
+                                <div class="message-top">
+
+                                    <div class="message-direction">
+
+                                        {% if message.sender_email|lower == req.requester_email|lower %}
+
+                                            Requester
+
+                                        {% else %}
+
+                                            {{ message.sender_name
+                                               or message.sender_email
+                                               or "Approver" }}
+
+                                        {% endif %}
+
+
+                                        <span class="arrow">
+                                            →
+                                        </span>
+
+
+                                        {% if message.recipient_email|lower == req.requester_email|lower %}
+
+                                            Requester
+
+                                        {% else %}
+
+                                            {{ message.recipient_name
+                                               or message.recipient_email
+                                               or "Approver" }}
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if message.created_at %}
+
+                                        <div class="message-date">
+
+                                            {{ message.created_at.strftime(
+                                                "%d-%m-%Y %H:%M"
+                                            ) }}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="message-person">
+
+                                    From:
+                                    {{ message.sender_name
+                                       or message.sender_email
+                                       or "—" }}
+
+                                </div>
+
+
+                                <div class="message-text">
+                                    {{ message.message or "—" }}
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+
+
+                        <!-- =================================================
+                             REQUESTER RESPONSE SECTION
+                             ================================================= -->
+
+                        {% if
+                            user_email|lower == root.recipient_email|lower
+                            and root.status == "OPEN"
+                        %}
+
+                            <div class="response-box">
+
+                                <div class="response-title">
+                                    Respond to this query
+                                </div>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{
+                                        url_for(
+                                            'respond_query',
+                                            query_id=root.id
+                                        )
+                                    }}"
+                                    class="response-form"
+                                >
+
+                                    <textarea
+                                        name="response"
+                                        placeholder="Enter your response..."
+                                        required
+                                    ></textarea>
+
+
+                                    <div class="response-actions">
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >
+                                            Submit Response
+                                        </button>
+
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <!-- =================================================
+                             APPROVER RESPONSE SECTION
+                             ================================================= -->
+
+                        {% if
+                            user_role == "APPROVER"
+                            and root.status == "RESPONDED"
+                            and root.sender_email|lower == user_email|lower
+                        %}
+
+                            <div class="approver-action-box">
+
+                                <div class="approver-action-title">
+                                    Submit Another Response
+                                </div>
+
+                                <div class="approver-action-description">
+
+                                    You can send another message to the
+                                    requester before closing this query.
+
+                                </div>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{
+                                        url_for(
+                                            'query_request',
+                                            request_number=req.request_number
+                                        )
+                                    }}"
+                                    class="response-form"
+                                >
+
+                                    <!-- Keep the existing participant
+                                         as the query recipient -->
+
+                                    <input
+                                        type="hidden"
+                                        name="query_target"
+                                        value="{{ root.recipient_email }}"
+                                    >
+
+
+                                    <textarea
+                                        name="query_comment"
+                                        placeholder="Enter another response or clarification..."
+                                    ></textarea>
+
+
+                                    <div class="response-actions">
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >
+                                            Submit Response
+                                        </button>
+
+                                    </div>
+
+                                </form>
+
+
+
+                                <!-- CLOSE QUERY -->
+
+                                <div class="close-action">
+
+                                    <span class="query-meta">
+                                        Received a satisfactory response?
+                                    </span>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{{
+                                            url_for(
+                                                'close_query',
+                                                query_id=root.id
+                                            )
+                                        }}"
+                                        onsubmit="
+                                            return confirm(
+                                                'Are you sure you want to close this query?'
+                                            );
+                                        "
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success"
+                                        >
+                                            ✓ Close Query
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <!-- =================================================
+                             APPROVER CAN ALSO CLOSE FROM OPEN/RESPONDED
+                             ONLY WHEN LOGGED-IN APPROVER CREATED ROOT
+                             ================================================= -->
+
+                        {% if
+                            user_role == "APPROVER"
+                            and root.sender_email|lower == user_email|lower
+                            and root.status == "RESPONDED"
+                        %}
+
+                            {# Close button is already displayed above. #}
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-state-title">
+                        No queries found
+                    </div>
+
+                    <div class="empty-state-text">
+                        There are no query messages associated
+                        with this request.
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ATTACHMENTS
+         ===================================================== -->
+
+    {% if attachments %}
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Attachments
+                </h2>
+
+            </div>
+
+
+            <div class="section-body">
+
+                <div class="attachments">
+
+                    {% for filename in attachments %}
+
+                        <a
+                            href="{{
+                                url_for(
+                                    'request_attachment',
+                                    filename=filename
+                                )
+                            }}"
+                            class="attachment"
+                            target="_blank"
+                        >
+                            📎 {{ filename }}
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         APPROVAL HISTORY
+         ===================================================== -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2 class="section-title">
+                Approval History
+            </h2>
+
+        </div>
+
+
+        <div class="section-body">
+
+            {% if approval_history %}
+
+                <div class="table-wrapper">
+
+                    <table class="history-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Level
+                                </th>
+
+                                <th>
+                                    Approver
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                                <th>
+                                    Comment
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for history in approval_history %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ history.approval_level }}
+                                    </td>
+
+                                    <td>
+                                        {{ history.approver_email }}
+                                    </td>
+
+                                    <td>
+
+                                        {% set action =
+                                            (history.action or "")|upper
+                                        %}
+
+                                        <span
+                                            class="status-badge
+                                            {% if action == 'APPROVED' %}
+                                                status-approved
+                                            {% elif action == 'RETURNED' %}
+                                                status-returned
+                                            {% else %}
+                                                status-open
+                                            {% endif %}"
+                                        >
+                                            {{ history.action }}
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+                                        {{ history.comment or "—" }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if history.created_at %}
+
+                                            {{ history.created_at.strftime(
+                                                "%d-%m-%Y %H:%M"
+                                            ) }}
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-state-text">
+                        No approval history available.
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+
+</div>
+
+
+</body>
+</html>

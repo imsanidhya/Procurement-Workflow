@@ -1,0 +1,2121 @@
+/* =========================================================
+   PROCUREMENT WORKFLOW
+   GLOBAL STYLES
+========================================================= */
+
+
+/* =========================================================
+   ROOT VARIABLES
+========================================================= */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+
+    --success: #16a34a;
+    --warning: #d97706;
+    --danger: #dc2626;
+
+    --dark: #172033;
+    --text: #374151;
+    --muted: #6b7280;
+
+    --border: #e5e7eb;
+    --background: #f5f7fb;
+    --white: #ffffff;
+
+    --radius: 10px;
+}
+
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   PAGE CONTAINER
+========================================================= */
+
+.page-container {
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 35px auto;
+    padding: 0 15px;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.main-card {
+    position: relative;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    overflow: visible;
+
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.03),
+        0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.card-header-custom {
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1d4ed8 0%,
+            #2563eb 55%,
+            #3b82f6 100%
+        );
+
+    color: #ffffff;
+
+    padding: 28px 35px;
+
+    overflow: visible;
+
+    border-radius: 13px 13px 0 0;
+}
+
+
+/* =========================================================
+   HEADER DECORATION
+========================================================= */
+
+.card-header-custom::after {
+    content: "";
+
+    position: absolute;
+
+    width: 250px;
+    height: 250px;
+
+    right: -70px;
+    top: -120px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
+.card-header-custom h3 {
+    position: relative;
+    z-index: 2;
+
+    margin: 0;
+
+    font-size: 24px;
+    font-weight: 650;
+
+    line-height: 1.3;
+}
+
+.card-header-custom p {
+    position: relative;
+    z-index: 2;
+
+    margin: 7px 0 0;
+
+    font-size: 14px;
+
+    color: rgba(255, 255, 255, 0.88);
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   USER HEADER AREA
+========================================================= */
+
+.user-header-area {
+    position: relative;
+    z-index: 1000;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   USER PROFILE BUTTON
+========================================================= */
+
+.user-profile-btn {
+    position: relative;
+    z-index: 1001;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 8px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.96);
+    color: #1f2937;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.10);
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.15s ease;
+}
+
+.user-profile-btn:hover {
+    background: #ffffff;
+    color: #111827;
+
+    box-shadow:
+        0 5px 14px rgba(0, 0, 0, 0.15);
+
+    transform: translateY(-1px);
+}
+
+.user-profile-btn:focus,
+.user-profile-btn:focus-visible {
+    background: #ffffff;
+    color: #111827;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.25);
+
+    outline: none;
+}
+
+.user-profile-btn .bi-person-circle {
+    color: var(--primary);
+    line-height: 1;
+}
+
+
+/* =========================================================
+   USER DROPDOWN
+========================================================= */
+
+.user-header-area .dropdown-menu {
+    position: absolute;
+    z-index: 1050;
+
+    min-width: 190px;
+
+    margin-top: 8px;
+    padding: 7px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.12),
+        0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+/* =========================================================
+   DROPDOWN ITEMS
+========================================================= */
+
+.user-header-area .dropdown-item {
+    display: flex;
+    align-items: center;
+
+    min-height: 40px;
+
+    padding: 8px 10px;
+
+    border-radius: 7px;
+
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.user-header-area .dropdown-item:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.user-header-area .dropdown-item:focus {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+
+    outline: none;
+}
+
+.user-header-area .dropdown-item.text-danger:hover {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.user-header-area .dropdown-item i {
+    width: 20px;
+
+    font-size: 15px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   DROPDOWN DIVIDER
+========================================================= */
+
+.user-header-area .dropdown-divider {
+    margin: 6px 4px;
+
+    border-top-color: var(--border);
+}
+
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.card-body {
+    background: #ffffff;
+
+    border-radius: 0 0 13px 13px;
+}
+
+
+/* =========================================================
+   FORM SECTION
+========================================================= */
+
+.section {
+    margin-bottom: 28px;
+}
+
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.section-title {
+    display: flex;
+    align-items: center;
+
+    font-size: 17px;
+    font-weight: 650;
+
+    color: var(--dark);
+
+    margin-bottom: 12px;
+}
+
+.section-title i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    margin-right: 10px;
+
+    background: var(--primary-light);
+    color: var(--primary);
+
+    border-radius: 8px;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   SECTION HR
+========================================================= */
+
+.section hr {
+    border: 0;
+
+    border-top: 1px solid var(--border);
+
+    margin: 10px 0 22px;
+}
+
+
+/* =========================================================
+   INFO BOX
+========================================================= */
+
+.info-box {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    background: #f0f6ff;
+
+    border: 1px solid #dbeafe;
+    border-left: 4px solid var(--primary);
+
+    padding: 13px 15px;
+
+    border-radius: 8px;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+.info-box > i {
+    flex-shrink: 0;
+
+    margin-top: 2px;
+
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   FORM LABELS
+========================================================= */
+
+.form-label {
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+    margin-bottom: 7px;
+}
+
+.required {
+    color: var(--danger);
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.form-control,
+.form-select {
+    min-height: 44px;
+
+    border: 1px solid #d7dce3;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    padding: 9px 12px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+textarea.form-control {
+    min-height: auto;
+
+    resize: vertical;
+}
+
+.form-control::placeholder {
+    color: #9ca3af;
+}
+
+.form-control:hover,
+.form-select:hover {
+    border-color: #b7c0cc;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary);
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+
+    outline: none;
+}
+
+
+/* =========================================================
+   READONLY USER INFORMATION
+========================================================= */
+
+.form-control[readonly] {
+    background: #f8fafc;
+
+    color: #4b5563;
+
+    cursor: default;
+}
+
+.form-control[readonly]:focus {
+    border-color: #d7dce3;
+
+    background: #f8fafc;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   INPUT GROUP
+========================================================= */
+
+.input-group-text {
+    background: #f8fafc;
+
+    border: 1px solid #d7dce3;
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   APPROVAL WORKFLOW
+========================================================= */
+
+.approver-row {
+    position: relative;
+
+    background: #fafbfc;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    padding: 16px;
+
+    margin-bottom: 12px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.approver-row:hover {
+    border-color: #cbd5e1;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.03);
+}
+
+
+/* =========================================================
+   APPROVAL LEVEL BADGE
+========================================================= */
+
+.level-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    box-shadow:
+        0 3px 8px rgba(37, 99, 235, 0.25);
+}
+
+
+/* =========================================================
+   LEVEL INPUT
+========================================================= */
+
+.level-input {
+    background: #f8fafc !important;
+
+    color: #64748b !important;
+
+    cursor: default;
+}
+
+
+/* =========================================================
+   ATTACHMENT BOX
+========================================================= */
+
+.attachment-box {
+    border: 2px dashed #d1d5db;
+
+    border-radius: 10px;
+
+    background: #fafafa;
+
+    padding: 30px;
+
+    text-align: center;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.attachment-box:hover {
+    background: #f8fafc;
+
+    border-color: #93c5fd;
+}
+
+.attachment-box > i {
+    font-size: 38px;
+
+    color: var(--primary);
+}
+
+.attachment-box h6 {
+    color: #374151;
+
+    font-weight: 650;
+}
+
+.attachment-box p {
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FILE INPUT
+========================================================= */
+
+input[type="file"] {
+    padding: 8px;
+
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    border: none;
+
+    background: #eaf2ff;
+
+    color: var(--primary);
+
+    border-radius: 6px;
+
+    padding: 7px 12px;
+
+    margin-right: 10px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: #dbeafe;
+}
+
+
+/* =========================================================
+   ATTACHMENT PREVIEW SECTION
+========================================================= */
+
+.attachment-preview-container {
+    display: none;
+
+    margin-top: 20px;
+
+    text-align: left;
+}
+
+.attachment-preview-container.show {
+    display: block;
+}
+
+
+/* =========================================================
+   PREVIEW HEADER
+========================================================= */
+
+.attachment-preview-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 12px;
+}
+
+.attachment-preview-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #374151;
+
+    font-size: 13px;
+
+    font-weight: 650;
+}
+
+.attachment-preview-title i {
+    color: var(--success);
+
+    font-size: 16px;
+}
+
+.attachment-preview-count {
+    color: var(--muted);
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   PREVIEW GRID
+========================================================= */
+
+.attachment-preview-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(150px, 1fr));
+
+    gap: 14px;
+}
+
+
+/* =========================================================
+   INDIVIDUAL PREVIEW CARD
+========================================================= */
+
+.attachment-preview-item {
+    position: relative;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 10px;
+
+    min-height: 150px;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.04);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.attachment-preview-item:hover {
+    border-color: #93c5fd;
+
+    box-shadow:
+        0 6px 16px rgba(37, 99, 235, 0.10);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+.attachment-preview-image {
+    display: block;
+
+    width: 100%;
+    height: 125px;
+
+    object-fit: cover;
+
+    background: #f8fafc;
+
+    cursor: zoom-in;
+
+    transition:
+        transform 0.25s ease;
+}
+
+.attachment-preview-item:hover
+.attachment-preview-image {
+    transform: scale(1.02);
+}
+
+
+/* =========================================================
+   NON-IMAGE FILE PREVIEW
+========================================================= */
+
+.attachment-file-preview {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 125px;
+
+    padding: 15px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    text-align: center;
+}
+
+.attachment-file-preview i {
+    margin-bottom: 8px;
+
+    font-size: 38px;
+
+    color: var(--primary);
+}
+
+.attachment-file-preview.pdf i {
+    color: #dc2626;
+}
+
+.attachment-file-preview.word i {
+    color: #2563eb;
+}
+
+.attachment-file-preview.excel i {
+    color: #16a34a;
+}
+
+.attachment-file-preview.archive i {
+    color: #d97706;
+}
+
+
+/* =========================================================
+   PREVIEW FILE NAME
+========================================================= */
+
+.attachment-preview-filename {
+    display: block;
+
+    padding: 9px 10px;
+
+    border-top: 1px solid #eef0f3;
+
+    background: #ffffff;
+
+    color: #374151;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   PREVIEW REMOVE BUTTON
+========================================================= */
+
+.attachment-preview-remove {
+    position: absolute;
+
+    top: 7px;
+    right: 7px;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    color: #dc2626;
+
+    box-shadow:
+        0 2px 7px rgba(0, 0, 0, 0.15);
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.attachment-preview-remove:hover {
+    background: #dc2626;
+
+    color: #ffffff;
+
+    transform: scale(1.05);
+}
+
+.attachment-preview-remove i {
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   PREVIEW ZOOM HINT
+========================================================= */
+
+.attachment-preview-zoom-hint {
+    position: absolute;
+
+    left: 7px;
+    top: 7px;
+
+    z-index: 4;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+
+    background: rgba(17, 24, 39, 0.72);
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    transition:
+        opacity 0.2s ease;
+}
+
+.attachment-preview-item:hover
+.attachment-preview-zoom-hint {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW MODAL
+   Matches submit_request.html
+========================================================= */
+
+.image-preview-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 30px;
+
+    visibility: hidden;
+
+    opacity: 0;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.image-preview-modal.show {
+    display: flex;
+
+    visibility: visible;
+
+    opacity: 1;
+}
+
+
+/* =========================================================
+   IMAGE MODAL BACKDROP
+========================================================= */
+
+.image-preview-backdrop {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(15, 23, 42, 0.88);
+
+    backdrop-filter: blur(3px);
+
+    -webkit-backdrop-filter: blur(3px);
+
+    cursor: zoom-out;
+}
+
+
+/* =========================================================
+   IMAGE MODAL CONTENT
+========================================================= */
+
+.image-preview-content {
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: 1200px;
+    max-height: 90vh;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   FULL SCREEN IMAGE
+========================================================= */
+
+.image-preview-content img {
+    display: block;
+
+    max-width: 95%;
+    max-height: 88vh;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.35);
+
+    pointer-events: auto;
+
+    cursor: default;
+}
+
+
+/* =========================================================
+   MODAL CLOSE BUTTON
+========================================================= */
+
+.image-preview-close {
+    position: absolute;
+
+    top: 5px;
+    right: 5px;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+.image-preview-close:hover {
+    background: #dc2626;
+
+    transform: scale(1.05);
+}
+
+.image-preview-close:focus {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+
+/* =========================================================
+   MODAL FILE NAME
+========================================================= */
+
+.image-preview-filename {
+    position: absolute;
+
+    left: 50%;
+    bottom: 0;
+
+    z-index: 5;
+
+    transform: translateX(-50%);
+
+    max-width: 80%;
+
+    padding: 8px 15px;
+
+    border-radius: 7px;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    text-align: center;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   PREVENT PAGE SCROLL WHEN MODAL IS OPEN
+========================================================= */
+
+body.image-preview-open {
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn {
+    min-height: 42px;
+
+    border-radius: 8px;
+
+    padding: 8px 18px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:focus {
+    outline: none;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+========================================================= */
+
+.btn-primary {
+    background: var(--primary);
+
+    border-color: var(--primary);
+
+    box-shadow:
+        0 3px 8px rgba(37, 99, 235, 0.20);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+
+    border-color: var(--primary-dark);
+
+    box-shadow:
+        0 5px 12px rgba(37, 99, 235, 0.25);
+}
+
+
+/* =========================================================
+   SECONDARY BUTTON
+========================================================= */
+
+.btn-secondary {
+    background: #475569;
+
+    border-color: #475569;
+}
+
+.btn-secondary:hover {
+    background: #334155;
+
+    border-color: #334155;
+}
+
+
+/* =========================================================
+   OUTLINE PRIMARY
+========================================================= */
+
+.btn-outline-primary {
+    color: var(--primary);
+
+    border-color: #bfdbfe;
+
+    background: #ffffff;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+
+    border-color: #93c5fd;
+}
+
+
+/* =========================================================
+   OUTLINE SECONDARY
+========================================================= */
+
+.btn-outline-secondary {
+    color: #475569;
+
+    border-color: #cbd5e1;
+
+    background: #ffffff;
+}
+
+.btn-outline-secondary:hover {
+    color: #334155;
+
+    background: #f8fafc;
+
+    border-color: #94a3b8;
+}
+
+
+/* =========================================================
+   DANGER BUTTON
+========================================================= */
+
+.btn-outline-danger {
+    border-color: #fecaca;
+
+    color: var(--danger);
+
+    background: #ffffff;
+}
+
+.btn-outline-danger:hover {
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    border-color: #fca5a5;
+}
+
+
+/* =========================================================
+   DECLARATION
+========================================================= */
+
+.form-check {
+    position: relative;
+
+    background: #f8fafc;
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    padding: 14px 15px 14px 38px;
+}
+
+.form-check-input {
+    margin-top: 4px;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+
+    border-color: var(--primary);
+}
+
+.form-check-input:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.form-check-label {
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    color: #4b5563;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   BOTTOM ACTIONS
+========================================================= */
+
+.bottom-actions {
+    border-top: 1px solid var(--border);
+
+    margin-top: 30px;
+
+    padding-top: 22px;
+}
+
+
+/* =========================================================
+   FLASH MESSAGES
+========================================================= */
+
+.alert {
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.alert-success {
+    border-color: #bbf7d0;
+
+    background: #f0fdf4;
+
+    color: #166534;
+}
+
+.alert-danger {
+    border-color: #fecaca;
+
+    background: #fef2f2;
+
+    color: #991b1b;
+}
+
+.alert-warning {
+    border-color: #fde68a;
+
+    background: #fffbeb;
+
+    color: #92400e;
+}
+
+.alert-info {
+    border-color: #bfdbfe;
+
+    background: #eff6ff;
+
+    color: #1e40af;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer-note {
+    text-align: center;
+
+    color: #9ca3af;
+
+    font-size: 12px;
+
+    margin-top: 15px;
+
+    padding-bottom: 20px;
+}
+
+
+/* =========================================================
+   BOOTSTRAP DROPDOWN FIX
+========================================================= */
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    z-index: 1050;
+}
+
+.user-header-area .dropdown-toggle::after {
+    margin-left: 8px;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   FORM VALIDATION
+========================================================= */
+
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+    border-color: #ef4444;
+}
+
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+    border-color: #22c55e;
+}
+
+.was-validated .form-control:invalid:focus,
+.was-validated .form-select:invalid:focus {
+    box-shadow:
+        0 0 0 3px rgba(239, 68, 68, 0.10);
+}
+
+.was-validated .form-control:valid:focus,
+.was-validated .form-select:valid:focus {
+    box-shadow:
+        0 0 0 3px rgba(34, 197, 94, 0.10);
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard-info-card {
+    background: #ffffff;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    padding: 18px 20px;
+
+    min-height: 105px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dashboard-info-card:hover {
+    border-color: #cbd5e1;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.05);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DASHBOARD INFORMATION LABEL
+========================================================= */
+
+.dashboard-info-label {
+    display: flex;
+
+    align-items: center;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-bottom: 9px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.3px;
+}
+
+.dashboard-info-label i {
+    color: var(--primary);
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   DASHBOARD INFORMATION VALUE
+========================================================= */
+
+.dashboard-info-value {
+    color: var(--dark);
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   DASHBOARD ACTION CARD
+========================================================= */
+
+.dashboard-action-card {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 16px;
+
+    height: 100%;
+
+    background: #fafbfc;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dashboard-action-card:hover {
+    border-color: #bfdbfe;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.05);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   DASHBOARD ACTION ICON
+========================================================= */
+
+.dashboard-action-icon {
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 10px;
+
+    background: var(--primary-light);
+
+    color: var(--primary);
+
+    font-size: 21px;
+}
+
+
+/* =========================================================
+   DASHBOARD ACTION CONTENT
+========================================================= */
+
+.dashboard-action-card h6 {
+    margin: 2px 0 7px;
+
+    color: var(--dark);
+
+    font-size: 15px;
+
+    font-weight: 650;
+}
+
+.dashboard-action-card p {
+    margin: 0 0 15px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   DASHBOARD HEADER BUTTON
+========================================================= */
+
+.card-header-custom .btn-light {
+    min-width: 105px;
+
+    color: #1d4ed8;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card-header-custom .btn-light:hover {
+    color: #1d4ed8;
+
+    background: #f8fafc;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .page-container {
+        margin: 15px auto;
+
+        padding: 0 10px;
+    }
+
+
+    .card-header-custom {
+        padding: 22px;
+    }
+
+
+    .card-header-custom h3 {
+        font-size: 20px;
+    }
+
+
+    .card-body {
+        padding: 22px !important;
+    }
+
+
+    /* HEADER */
+
+    .card-header-custom > .d-flex {
+        align-items: flex-start !important;
+
+        gap: 15px;
+    }
+
+
+    .user-profile-btn {
+        font-size: 12px;
+
+        padding: 7px 10px;
+    }
+
+
+    .user-profile-btn .bi-person-circle {
+        font-size: 20px !important;
+    }
+
+
+    /* APPROVER */
+
+    .approver-row {
+        padding: 14px;
+    }
+
+
+    /* ATTACHMENT PREVIEW */
+
+    .attachment-preview-grid {
+        grid-template-columns:
+            repeat(
+                auto-fill,
+                minmax(135px, 1fr)
+            );
+
+        gap: 12px;
+    }
+
+
+    .attachment-preview-image,
+    .attachment-file-preview {
+        height: 115px;
+    }
+
+
+    /* IMAGE MODAL */
+
+    .image-preview-modal {
+        padding: 20px;
+    }
+
+
+    .image-preview-content img {
+        max-width: 96%;
+
+        max-height: 84vh;
+    }
+
+
+    .image-preview-close {
+        top: 5px;
+
+        right: 5px;
+    }
+
+
+    /* BOTTOM ACTIONS */
+
+    .bottom-actions {
+        text-align: center;
+    }
+
+
+    .bottom-actions > div {
+        width: 100%;
+    }
+
+
+    .bottom-actions .btn {
+        margin-top: 8px;
+    }
+
+
+    /* DASHBOARD */
+
+    .dashboard-info-card {
+        min-height: auto;
+    }
+
+
+    .dashboard-action-card {
+        padding: 17px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+
+    .page-container {
+        margin: 10px auto;
+
+        padding: 0 6px;
+    }
+
+
+    .card-header-custom {
+        padding: 18px;
+    }
+
+
+    .card-header-custom > .d-flex {
+        flex-direction: column;
+
+        align-items: stretch !important;
+    }
+
+
+    .card-header-custom h3 {
+        font-size: 18px;
+    }
+
+
+    .card-header-custom p {
+        font-size: 12px;
+    }
+
+
+    /* USER PROFILE */
+
+    .user-header-area {
+        align-self: flex-end;
+    }
+
+
+    .user-profile-btn {
+        min-height: 40px;
+
+        padding: 7px 12px;
+    }
+
+
+    .user-header-area .dropdown-menu {
+        min-width: 180px;
+
+        max-width: calc(100vw - 30px);
+    }
+
+
+    /* SECTION */
+
+    .section-title {
+        font-size: 16px;
+    }
+
+
+    /* BUTTONS */
+
+    .btn {
+        width: 100%;
+    }
+
+
+    .bottom-actions .btn {
+        margin-right: 0 !important;
+
+        margin-left: 0 !important;
+    }
+
+
+    /* ATTACHMENT */
+
+    .attachment-box {
+        padding: 22px 15px;
+    }
+
+
+    /* ATTACHMENT PREVIEW */
+
+    .attachment-preview-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+
+    .attachment-preview-image,
+    .attachment-file-preview {
+        height: 110px;
+    }
+
+
+    .attachment-preview-filename {
+        font-size: 10px;
+
+        padding: 8px;
+    }
+
+
+    .attachment-preview-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+
+    /* IMAGE MODAL */
+
+    .image-preview-modal {
+        padding: 12px;
+    }
+
+
+    .image-preview-content img {
+        max-width: 98%;
+
+        max-height: 80vh;
+
+        border-radius: 6px;
+    }
+
+
+    .image-preview-close {
+        top: 8px;
+
+        right: 8px;
+
+        width: 38px;
+        height: 38px;
+
+        font-size: 18px;
+    }
+
+
+    .image-preview-filename {
+        max-width: 85%;
+
+        bottom: 8px;
+
+        font-size: 11px;
+    }
+
+
+    /* DASHBOARD */
+
+    .dashboard-action-card {
+        flex-direction: column;
+    }
+
+
+    .dashboard-action-icon {
+        width: 42px;
+        height: 42px;
+
+        font-size: 19px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .card-header-custom h3 {
+        font-size: 17px;
+    }
+
+
+    .card-body {
+        padding: 17px !important;
+    }
+
+
+    .user-profile-btn {
+        width: auto;
+
+        font-size: 12px;
+    }
+
+
+    .section-title i {
+        width: 30px;
+        height: 30px;
+
+        font-size: 14px;
+    }
+
+
+    /* ATTACHMENT PREVIEW */
+
+    .attachment-preview-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .attachment-preview-image,
+    .attachment-file-preview {
+        height: 150px;
+    }
+
+
+    /* IMAGE MODAL */
+
+    .image-preview-modal {
+        padding: 8px;
+    }
+
+
+    .image-preview-content img {
+        max-width: 99%;
+
+        max-height: 78vh;
+    }
+
+
+    .image-preview-close {
+        top: 6px;
+
+        right: 6px;
+
+        width: 36px;
+        height: 36px;
+
+        font-size: 16px;
+    }
+
+
+    .image-preview-filename {
+        max-width: 90%;
+
+        bottom: 5px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+button,
+a,
+input,
+textarea,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+    }
+}
