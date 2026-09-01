@@ -1,2 +1,981 @@
-# Procurement-Workflow
-Web-based request and approval management system with configurable multi-level workflows, queries, returns, rejections, and email notifications and final approval pdf generation.
+# Procurement Workflow System
+
+A web-based **Procurement Workflow and Multi-Level Approval System** built with Flask and PostgreSQL.
+
+The system allows employees to create procurement requests, save incomplete requests as drafts, submit completed requests for approval, and track the request through a configurable multi-level approval workflow.
+
+---
+
+## Features
+
+### User Authentication
+
+* User login and logout
+* Role-based access control
+* Employee and Approver roles
+* Session-based user management
+
+### Procurement Requests
+
+* Create new procurement requests
+* Enter requester information
+* Add requirement and business justification details
+* Add BOQ / quantity information
+* Upload supporting documents
+* Submit requests for approval
+
+### Save as Draft
+
+* Save a request at any stage
+* Drafts do **not require mandatory fields to be completed**
+* Continue editing a saved draft later
+* Submit a draft once all required information is completed
+
+### Multi-Level Approval
+
+* Configure multiple approval levels
+* Assign organization email addresses to approvers
+* Requests move sequentially from one approver to the next
+* Final approval changes the request status to `APPROVED`
+
+### Request Actions
+
+Approvers can:
+
+* Approve requests
+* Return requests with comments
+* Raise queries
+* View request history
+
+### Query Management
+
+* Send queries to individual participants
+* Send queries to all participants
+* Respond to queries
+* Track query threads
+* Close responded queries
+* Prevent approval while active queries exist
+
+### Attachments
+
+Supported file types include:
+
+* JPG
+* JPEG
+* PNG
+* GIF
+* WEBP
+* PDF
+* DOC
+* DOCX
+* XLS
+* XLSX
+* CSV
+* TXT
+* ZIP
+
+Maximum attachment size:
+
+**10 MB per file**
+
+### MIS Integration
+
+Procurement request information can be synchronized with the configured MIS file.
+
+### Request History
+
+Users can view:
+
+* Request details
+* Approval history
+* Query history
+* Current status
+* Assigned approvers
+* Attachments
+
+---
+
+# Technology Stack
+
+## Backend
+
+* Python
+* Flask
+* Flask-SQLAlchemy
+* SQLAlchemy
+* PostgreSQL
+* psycopg
+
+## Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+* Bootstrap 5
+* Bootstrap Icons
+
+## Supporting Libraries
+
+* ReportLab
+* OpenPyXL
+* Pillow
+* python-dotenv
+* Werkzeug
+
+## Production
+
+* Gunicorn
+* Nginx
+* Ubuntu Server
+* PostgreSQL
+
+---
+
+# Project Structure
+
+```text
+ProcurementWorkflow/
+│
+├── app.py
+├── config.py
+├── models.py
+├── mis.py
+├── email_service.py
+├── pdf_generator.py
+├── create_user.py
+├── create_approver.py
+├── requirements.txt
+├── .gitignore
+├── .env.example
+│
+├── templates/
+│   ├── login.html
+│   ├── dashboard.html
+│   ├── submit_request.html
+│   ├── request_details.html
+│   ├── review_request.html
+│   ├── query_history.html
+│   └── ...
+│
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   │
+│   └── js/
+│       └── script.js
+│
+├── uploads/
+│
+└── venv/
+```
+
+> `venv/`, `.env`, uploaded files, generated data, and other runtime files should not be committed to Git.
+
+---
+
+# Database
+
+The application uses PostgreSQL.
+
+Main database entities include:
+
+* `users`
+* `procurement_requests`
+* `approval_history`
+* `query_messages`
+
+The `ProcurementRequest` model stores request information, workflow status, approvers, attachments, timestamps, and review information.
+
+---
+
+# Request Workflow
+
+```text
+Employee Login
+      │
+      ▼
+Dashboard
+      │
+      ▼
+Create Procurement Request
+      │
+      ├──────────────► Save as Draft
+      │                       │
+      │                       ▼
+      │                    DRAFT
+      │                       │
+      │                       ▼
+      │                 Edit Draft
+      │                       │
+      │                       ▼
+      └────────────────► Submit Request
+                              │
+                              ▼
+                         SUBMITTED
+                              │
+                              ▼
+                       Approver Level 1
+                              │
+                ┌─────────────┼─────────────┐
+                ▼             ▼             ▼
+             APPROVE        QUERY         RETURN
+                │
+                ▼
+        Next Approver Level
+                │
+                ▼
+            APPROVED
+```
+
+---
+
+# Request Statuses
+
+The system supports the following workflow states:
+
+```text
+DRAFT
+SUBMITTED
+QUERY
+RETURNED
+APPROVED
+```
+
+### DRAFT
+
+The request has been saved but is not yet submitted for approval.
+
+### SUBMITTED
+
+The request has been submitted and is waiting for approval.
+
+### QUERY
+
+An active query exists on the request.
+
+### RETURNED
+
+An approver has returned the request for changes.
+
+### APPROVED
+
+All configured approval levels have approved the request.
+
+---
+
+# Installation
+
+## 1. Clone the repository
+
+```bash
+git clone <YOUR_PRIVATE_REPOSITORY_URL>
+cd ProcurementWorkflow
+```
+
+---
+
+## 2. Create a virtual environment
+
+```bash
+python3 -m venv venv
+```
+
+Activate it:
+
+### macOS / Linux
+
+```bash
+source venv/bin/activate
+```
+
+### Windows
+
+```powershell
+venv\Scripts\activate
+```
+
+---
+
+## 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# Environment Configuration
+
+Create a `.env` file in the project root.
+
+Example:
+
+```env
+SECRET_KEY=replace_with_a_secure_random_secret
+
+DATABASE_URL=postgresql+psycopg://procurement_app:password@localhost:5432/procurement_workflow
+
+UPLOAD_FOLDER=uploads
+
+MIS_FILE=mis.xlsx
+
+SMTP_SERVER=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURITY=STARTTLS
+SMTP_USERNAME=replace_with_username
+SMTP_PASSWORD=replace_with_password
+```
+
+**Never commit `.env` to Git.**
+
+Use `.env.example` as the configuration template.
+
+---
+
+# PostgreSQL Setup
+
+Create the PostgreSQL database:
+
+```sql
+CREATE DATABASE procurement_workflow;
+```
+
+Create an application user:
+
+```sql
+CREATE USER procurement_app
+WITH PASSWORD 'YOUR_DATABASE_PASSWORD';
+```
+
+Grant database access:
+
+```sql
+GRANT ALL PRIVILEGES
+ON DATABASE procurement_workflow
+TO procurement_app;
+```
+
+Update `DATABASE_URL` in `.env` accordingly.
+
+---
+
+# Run the Application
+
+Activate the virtual environment:
+
+```bash
+source venv/bin/activate
+```
+
+Start Flask:
+
+```bash
+python app.py
+```
+
+The development server should be available at:
+
+```text
+http://127.0.0.1:5000
+```
+
+> Flask's development server is intended for development/testing. Use Gunicorn and Nginx for production deployment.
+
+---
+
+# Create Users
+
+The project includes utilities for creating users and approvers.
+
+Example:
+
+```bash
+python create_user.py
+```
+
+and:
+
+```bash
+python create_approver.py
+```
+
+Follow the prompts provided by the scripts.
+
+---
+
+# Production Deployment
+
+The recommended production architecture is:
+
+```text
+Internet
+   │
+   ▼
+Nginx
+   │
+   ▼
+Gunicorn
+   │
+   ▼
+Flask Application
+   │
+   ▼
+PostgreSQL
+```
+
+Recommended production environment:
+
+* Ubuntu Server
+* PostgreSQL
+* Gunicorn
+* Nginx
+* HTTPS
+* systemd
+
+Example Gunicorn command:
+
+```bash
+gunicorn \
+    --workers 3 \
+    --bind 127.0.0.1:8000 \
+    app:app
+```
+
+---
+
+# Git Deployment
+
+Recommended files to commit:
+
+```text
+app.py
+config.py
+models.py
+mis.py
+email_service.py
+pdf_generator.py
+create_user.py
+create_approver.py
+requirements.txt
+templates/
+static/
+.gitignore
+.env.example
+README.md
+```
+
+Do **not** commit:
+
+```text
+venv/
+.env
+__pycache__/
+*.pyc
+uploads/*
+*.log
+*.db
+*.sqlite
+```
+
+---
+
+# Security
+
+Before production deployment:
+
+* Use a strong random `SECRET_KEY`
+* Keep database credentials in environment variables
+* Keep SMTP credentials outside Git
+* Use HTTPS
+* Do not expose PostgreSQL directly to the internet
+* Restrict access to uploaded files
+* Use secure session cookies
+* Run the application behind Nginx and Gunicorn
+* Keep Ubuntu and Python dependencies updated
+
+---
+
+# Multi-User Support
+
+The application is designed to support multiple authenticated users simultaneously.
+
+Each user's identity is maintained through their Flask session.
+
+Example:
+
+```text
+User A
+   │
+   └── Session A ── Request A
+
+User B
+   │
+   └── Session B ── Request B
+
+User C
+   │
+   └── Session C ── Request C
+```
+
+Request ownership is checked against the logged-in user's identity before accessing or modifying requests and drafts.
+
+---
+
+# Attachments
+
+Uploaded files are stored in the configured upload directory.
+
+Example:
+
+```text
+uploads/
+├── abc123_document.pdf
+├── 7c91a_image.png
+└── ...
+```
+
+Uploaded files should be treated as runtime data and should not be committed to Git.
+
+---
+
+# Development
+
+Recommended development workflow:
+
+```bash
+git pull
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+After making changes:
+
+```bash
+git status
+git add .
+git commit -m "Describe your changes"
+git push
+```
+
+---
+
+# Troubleshooting
+
+### Flask module not found
+
+Activate the virtual environment:
+
+```bash
+source venv/bin/activate
+```
+
+Then reinstall:
+
+```bash
+pip install -r requirements.txt
+```
+
+### PostgreSQL connection error
+
+Verify:
+
+```bash
+sudo systemctl status postgresql
+```
+
+Check the database configuration in `.env`.
+
+### Gunicorn not starting
+
+Check:
+
+```bash
+sudo journalctl -u procurement -n 100 --no-pager
+```
+
+### Nginx configuration error
+
+Run:
+
+```bash
+sudo nginx -t
+```
+
+### Application logs
+
+For a systemd deployment:
+
+```bash
+sudo journalctl -u procurement -f
+```
+
+---
+# Running the Project
+
+## 1. Clone the Repository
+
+```bash
+git clone <YOUR_PRIVATE_REPOSITORY_URL>
+cd ProcurementWorkflow
+```
+
+---
+
+## 2. Create a Python Virtual Environment
+
+### macOS / Linux
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### Windows
+
+```powershell
+python -m venv venv
+venv\Scripts\activate
+```
+
+After activation, the terminal should show something similar to:
+
+```text
+(venv) user@computer:~/ProcurementWorkflow$
+```
+
+---
+
+## 3. Install Python Dependencies
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+---
+
+## 4. Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+touch .env
+```
+
+Add the required configuration:
+
+```env
+SECRET_KEY=your_secure_secret_key
+
+DATABASE_URL=postgresql+psycopg://procurement_app:your_password@localhost:5432/procurement_workflow
+
+UPLOAD_FOLDER=uploads
+
+MIS_FILE=mis.xlsx
+
+SMTP_SERVER=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURITY=STARTTLS
+SMTP_USERNAME=your_email
+SMTP_PASSWORD=your_password
+```
+
+Do not commit `.env` to Git.
+
+---
+
+## 5. Start PostgreSQL
+
+Make sure PostgreSQL is running.
+
+### Ubuntu
+
+```bash
+sudo systemctl start postgresql
+```
+
+Check:
+
+```bash
+sudo systemctl status postgresql
+```
+
+### macOS
+
+If PostgreSQL was installed with Homebrew:
+
+```bash
+brew services start postgresql
+```
+
+Check:
+
+```bash
+brew services list
+```
+
+---
+
+## 6. Create the Database
+
+Create the PostgreSQL database:
+
+```bash
+sudo -u postgres psql
+```
+
+Then:
+
+```sql
+CREATE DATABASE procurement_workflow;
+
+CREATE USER procurement_app
+WITH PASSWORD 'your_database_password';
+
+GRANT ALL PRIVILEGES
+ON DATABASE procurement_workflow
+TO procurement_app;
+
+\q
+```
+
+Make sure the `DATABASE_URL` in `.env` matches these credentials.
+
+---
+
+## 7. Run the Flask Application
+
+Activate the virtual environment:
+
+```bash
+source venv/bin/activate
+```
+
+Then run:
+
+```bash
+python app.py
+```
+
+The Flask application will normally start on:
+
+```text
+http://127.0.0.1:5000
+```
+
+Open the URL in your browser.
+
+---
+
+## 8. Create Users
+
+Before using the application, create the required user accounts.
+
+For a normal employee:
+
+```bash
+python create_user.py
+```
+
+For an approver:
+
+```bash
+python create_approver.py
+```
+
+Follow the prompts shown in the terminal.
+
+---
+
+## 9. Log In
+
+Open:
+
+```text
+http://127.0.0.1:5000/login
+```
+
+Log in using the credentials created in the previous step.
+
+---
+
+# Running in Development
+
+For development, simply use:
+
+```bash
+source venv/bin/activate
+python app.py
+```
+
+When you modify Python, HTML, CSS, or JavaScript files, refresh the browser to see the changes.
+
+---
+
+# Running in Production on Ubuntu
+
+The Flask development server should not be used as the production web server.
+
+Production should use:
+
+```text
+Nginx
+   ↓
+Gunicorn
+   ↓
+Flask
+   ↓
+PostgreSQL
+```
+
+Start Gunicorn manually for testing:
+
+```bash
+source venv/bin/activate
+
+gunicorn \
+    --workers 3 \
+    --bind 127.0.0.1:8000 \
+    app:app
+```
+
+For a permanent deployment, configure Gunicorn as a `systemd` service and place Nginx in front of it.
+
+---
+
+# Stopping the Application
+
+For the development server:
+
+```text
+Ctrl + C
+```
+
+For Gunicorn:
+
+```text
+Ctrl + C
+```
+
+For a production systemd service:
+
+```bash
+sudo systemctl stop procurement
+```
+
+---
+
+# Restarting the Application
+
+### Development
+
+```bash
+python app.py
+```
+
+### Production
+
+```bash
+sudo systemctl restart procurement
+```
+
+Check the service:
+
+```bash
+sudo systemctl status procurement
+```
+
+View application logs:
+
+```bash
+sudo journalctl -u procurement -f
+```
+
+---
+
+# Updating the Application
+
+After pulling new changes from Git:
+
+```bash
+cd /opt/ProcurementWorkflow
+
+git pull
+
+source venv/bin/activate
+
+pip install -r requirements.txt
+
+sudo systemctl restart procurement
+```
+
+Then verify:
+
+```bash
+sudo systemctl status procurement
+```
+
+---
+
+# Quick Start
+
+For a fresh development installation:
+
+```bash
+git clone <YOUR_PRIVATE_REPOSITORY_URL>
+cd ProcurementWorkflow
+
+python3 -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+
+# Configure .env and PostgreSQL
+
+python app.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5000
+```
+
+
+# Future Enhancements
+
+Potential future improvements include:
+
+* Email notifications
+* PDF generation for completed requests
+* Advanced audit logging
+* Request search and filtering
+* Admin management interface
+* Configurable approval workflows
+* Dashboard analytics
+* Automated backups
+* Production monitoring
+
+---
+
+# License
+
+This project is intended for internal organizational use.
+
+Add your organization's chosen license here if the project is later released publicly.
+
+---
+
+# Author
+
+**Sanidhya Kumar**
+
+Procurement Workflow System
+Built with Python, Flask, JavaScript, Bootstrap, and PostgreSQL.
+
+```
+```
+
+
+
