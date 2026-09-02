@@ -366,21 +366,10 @@ def email_button(
 # =========================================================
 # EMAIL: REQUEST SUBMITTED
 # =========================================================
-#
-# IMPORTANT:
-# The requester is now included in the recipients.
-# The email button uses request-history instead of
-# review-request because the requester is authorized
-# to access request history.
-# =========================================================
 
 def send_request_submitted_email(req):
 
     recipients = []
-
-    # -----------------------------------------------------
-    # REQUESTER
-    # -----------------------------------------------------
 
     requester_email = normalize_email(
         req.requester_email
@@ -390,10 +379,6 @@ def send_request_submitted_email(req):
         recipients.append(
             requester_email
         )
-
-    # -----------------------------------------------------
-    # APPROVERS
-    # -----------------------------------------------------
 
     for approver in get_assigned_approvers(req):
 
@@ -412,27 +397,15 @@ def send_request_submitted_email(req):
     if not recipients:
         return False
 
-    # -----------------------------------------------------
-    # REQUEST HISTORY URL
-    # -----------------------------------------------------
-
     history_url = (
         f"{get_application_url()}"
         f"/request-history/{req.request_number}"
     )
 
-    # -----------------------------------------------------
-    # EMAIL SUBJECT
-    # -----------------------------------------------------
-
     subject = (
         f"Procurement Request "
         f"{req.request_number} Submitted"
     )
-
-    # -----------------------------------------------------
-    # EMAIL BODY
-    # -----------------------------------------------------
 
     body = f"""
     <p>Hello,</p>
@@ -660,7 +633,11 @@ def send_final_approval_email(req):
 
     for approver in get_assigned_approvers(req):
 
-        if approver not in recipients:
+        approver = normalize_email(
+            approver
+        )
+
+        if approver and approver not in recipients:
             recipients.append(approver)
 
     if not recipients:
@@ -2430,10 +2407,6 @@ def submit_request():
             new_request
         )
 
-        # =====================================================
-        # EMAIL: REQUESTER + APPROVERS
-        # =====================================================
-
         email_sent = send_request_submitted_email(
             new_request
         )
@@ -3471,6 +3444,39 @@ def query_request(request_number):
 # =========================================================
 # RESPOND TO QUERY
 # =========================================================
+#
+# REVISED (this version):
+#
+# 1. Whatever query_id the form posts, this route now
+#    ALWAYS resolves it to the thread's ROOT (original)
+#    query message first. Previously, if the template ever
+#    posted the id of a non-root message in the thread, the
+#    "already a response" / status guards below would block
+#    a perfectly valid response from a recipient. Resolving
+#    to the root up front makes submission reliable
+#    regardless of which message id in the thread was used
+#    to trigger the form.
+#
+# 2. Supports both "response" and "query_response"
+#    form field names.
+#
+# 3. Loads the associated request before saving.
+#
+# 4. Creates the response and updates the original (root)
+#    query in the same database transaction.
+#
+# 5. Commits both changes together, so status changes are
+#    atomic and immediately visible to BOTH the query
+#    sender (approver) and the recipient the next time
+#    either of them loads the request/query history page
+#    (both read the same root.status value).
+#
+# 6. Email failure does NOT undo the saved response.
+#
+# 7. Redirects back to request history after successful
+#    submission.
+#
+# =========================================================
 
 @app.route(
     "/respond-query/<int:query_id>",
@@ -3478,6 +3484,10 @@ def query_request(request_number):
 )
 @login_required
 def respond_query(query_id):
+
+    # -----------------------------------------------------
+    # FIND QUERY
+    # -----------------------------------------------------
 
     query = QueryMessage.query.get(
         query_id
@@ -3492,9 +3502,60 @@ def respond_query(query_id):
 
         return redirect_to_dashboard()
 
+    # -----------------------------------------------------
+    # ALWAYS RESOLVE TO THE THREAD'S ROOT QUERY
+    # -----------------------------------------------------
+    #
+    # A response can only ever be attached to the original
+    # (root) query message. If the posted id belongs to a
+    # reply within the thread, resolve it to the root here
+    # so the response always goes through instead of being
+    # rejected further down.
+    #
+    # -----------------------------------------------------
+
+    if query.reply_to_id is not None:
+
+        root_of_query = QueryMessage.query.get(
+            query.reply_to_id
+        )
+
+        if root_of_query:
+            query = root_of_query
+
+    # -----------------------------------------------------
+    # CURRENT USER
+    # -----------------------------------------------------
+
     user_email = normalize_email(
         session.get("user_email")
     )
+
+    user_name = session.get(
+        "user_name",
+        "",
+    )
+
+    # -----------------------------------------------------
+    # LOAD REQUEST
+    # -----------------------------------------------------
+
+    req = ProcurementRequest.query.get(
+        query.request_id
+    )
+
+    if not req:
+
+        flash(
+            "Associated procurement request was not found.",
+            "danger",
+        )
+
+        return redirect_to_dashboard()
+
+    # -----------------------------------------------------
+    # SECURITY CHECK
+    # -----------------------------------------------------
 
     if not user_can_access_query(
         query,
@@ -3502,11 +3563,20 @@ def respond_query(query_id):
     ):
 
         flash(
-            "You are not authorized to access this query.",
+            "You are not authorized to respond to this query.",
             "danger",
         )
 
-        return redirect_to_dashboard()
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    # -----------------------------------------------------
+    # ONLY RECIPIENT CAN RESPOND
+    # -----------------------------------------------------
 
     recipient_email = normalize_email(
         query.recipient_email
@@ -3515,20 +3585,45 @@ def respond_query(query_id):
     if recipient_email != user_email:
 
         flash(
-            "Only the recipient of this query can respond.",
+            "Only the recipient of this query can submit a response.",
             "danger",
         )
 
-        return redirect_to_dashboard()
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    # -----------------------------------------------------
+    # ORIGINAL QUERY ONLY
+    # -----------------------------------------------------
+    #
+    # This is now purely a safety net: after the resolution
+    # step above, `query` should always be the root message
+    # (reply_to_id is None). This guard only fires if the
+    # root itself could not be resolved for some reason.
+    #
+    # -----------------------------------------------------
 
     if query.reply_to_id is not None:
 
         flash(
-            "This message is not an original query.",
+            "This message is already a response.",
             "warning",
         )
 
-        return redirect_to_dashboard()
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    # -----------------------------------------------------
+    # QUERY MUST STILL BE OPEN
+    # -----------------------------------------------------
 
     if query.status != "OPEN":
 
@@ -3537,7 +3632,29 @@ def respond_query(query_id):
             "warning",
         )
 
-        return redirect_to_dashboard()
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    # -----------------------------------------------------
+    # GET RESPONSE
+    # -----------------------------------------------------
+    #
+    # Primary field:
+    #
+    #     response
+    #
+    # Compatibility field:
+    #
+    #     query_response
+    #
+    # This prevents the response from being lost if the
+    # textarea in the template uses either name.
+    #
+    # -----------------------------------------------------
 
     response_text = (
         request.form.get(
@@ -3549,43 +3666,84 @@ def respond_query(query_id):
 
     if not response_text:
 
-        flash(
-            "Response is required.",
-            "danger",
-        )
-
-        req = ProcurementRequest.query.get(
-            query.request_id
-        )
-
-        if req:
-
-            return redirect(
-                url_for(
-                    "request_history",
-                    request_number=req.request_number,
-                )
+        response_text = (
+            request.form.get(
+                "query_response",
+                "",
             )
+            .strip()
+        )
 
-        return redirect_to_dashboard()
+    # -----------------------------------------------------
+    # VALIDATE RESPONSE
+    # -----------------------------------------------------
+
+    if not response_text:
+
+        flash(
+            "Please enter a response before submitting.",
+            "warning",
+        )
+
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    # -----------------------------------------------------
+    # CREATE RESPONSE MESSAGE
+    # -----------------------------------------------------
 
     reply = QueryMessage(
-        request_id=query.request_id,
+        request_id=req.id,
+
         sender_email=user_email,
-        sender_name=session.get(
-            "user_name"
-        ),
+
+        sender_name=user_name,
+
         recipient_type="INDIVIDUAL",
-        recipient_email=query.sender_email,
+
+        recipient_email=normalize_email(
+            query.sender_email
+        ),
+
         recipient_name=query.sender_name,
+
         message=response_text,
+
         status="RESPONDED",
+
         reply_to_id=query.id,
+
         created_at=datetime.utcnow(),
     )
 
+    # -----------------------------------------------------
+    # UPDATE ORIGINAL (ROOT) QUERY
+    # -----------------------------------------------------
+    #
+    # Both the sender's and the recipient's views read this
+    # same root.status value (see get_query_threads_for_user),
+    # so updating it here is what makes the status change
+    # visible on both ends as soon as either side reloads
+    # the request/query history page.
+    #
+    # -----------------------------------------------------
+
     query.status = "RESPONDED"
+
     query.responded_at = datetime.utcnow()
+
+    # The request remains in QUERY state until the
+    # approver closes the query.
+
+    req.status = "QUERY"
+
+    # -----------------------------------------------------
+    # SAVE EVERYTHING IN ONE TRANSACTION
+    # -----------------------------------------------------
 
     try:
 
@@ -3594,6 +3752,16 @@ def respond_query(query_id):
         )
 
         db.session.commit()
+
+        print(
+            "QUERY RESPONSE SAVED:",
+            "query_id=",
+            query.id,
+            "request=",
+            req.request_number,
+            "sender=",
+            user_email,
+        )
 
     except Exception as e:
 
@@ -3605,47 +3773,10 @@ def respond_query(query_id):
         )
 
         flash(
-            "There was an error while saving "
-            "your response.",
+            "Unable to save the response. "
+            "Please try again.",
             "danger",
         )
-
-        return redirect_to_dashboard()
-
-    req = ProcurementRequest.query.get(
-        query.request_id
-    )
-
-    if req:
-
-        req.status = "QUERY"
-
-        try:
-
-            db.session.commit()
-
-            update_mis(req)
-
-        except Exception as e:
-
-            db.session.rollback()
-
-            print(
-                "QUERY REQUEST STATUS ERROR:",
-                e,
-            )
-
-    send_query_response_email(
-        query,
-        response_text,
-    )
-
-    flash(
-        "Your response has been submitted successfully.",
-        "success",
-    )
-
-    if req:
 
         return redirect(
             url_for(
@@ -3654,7 +3785,295 @@ def respond_query(query_id):
             )
         )
 
-    return redirect_to_dashboard()
+    # -----------------------------------------------------
+    # UPDATE MIS
+    # -----------------------------------------------------
+
+    update_mis(
+        req
+    )
+
+    # -----------------------------------------------------
+    # SEND EMAIL
+    # -----------------------------------------------------
+    #
+    # Email failure must NOT affect the already committed
+    # response.
+    #
+    # -----------------------------------------------------
+
+    email_sent = send_query_response_email(
+        query,
+        response_text,
+    )
+
+    if not email_sent:
+
+        print(
+            "WARNING: Query response was saved successfully "
+            "but response notification email could not be sent:",
+            query.id,
+        )
+
+    # -----------------------------------------------------
+    # SUCCESS
+    # -----------------------------------------------------
+
+    flash(
+        "Your response has been submitted successfully.",
+        "success",
+    )
+
+    return redirect(
+        url_for(
+            "request_history",
+            request_number=req.request_number,
+        )
+    )
+
+
+# =========================================================
+# APPROVER FOLLOW-UP MESSAGE (SAME QUERY THREAD)
+# =========================================================
+#
+# Once a recipient has responded to a query (root.status ==
+# "RESPONDED"), the approver who raised it can either close
+# the query, or send another message on the SAME thread
+# before closing. Previously the template posted that
+# "another message" to `query_request`, which only works on
+# requests in "SUBMITTED" status - but by this point the
+# request is always in "QUERY" status, so that submission
+# ALWAYS failed silently (redirected with an error flash)
+# and nothing was ever added to the thread.
+#
+# This route instead appends the follow-up as a proper reply
+# on the existing thread (reply_to_id = root.id) and reopens
+# the root's status to "OPEN" so the recipient sees it and
+# can respond again. Because both the approver's and the
+# recipient's views read the same root.status value, the
+# status change is visible to both ends immediately.
+#
+# =========================================================
+
+@app.route(
+    "/query-followup/<int:query_id>",
+    methods=["POST"],
+)
+@approver_required
+def query_followup(query_id):
+
+    root_query = QueryMessage.query.get(
+        query_id
+    )
+
+    if not root_query:
+
+        flash(
+            "Query was not found.",
+            "danger",
+        )
+
+        return redirect(
+            url_for("approval_dashboard")
+        )
+
+    # Always resolve to the thread's root, defensively -
+    # a follow-up always attaches under the root message.
+    root_query = get_query_root(
+        root_query
+    )
+
+    if not root_query:
+
+        flash(
+            "Original query could not be found.",
+            "danger",
+        )
+
+        return redirect(
+            url_for("approval_dashboard")
+        )
+
+    approver_email = normalize_email(
+        session.get("user_email")
+    )
+
+    approver_name = session.get(
+        "user_name",
+        "",
+    )
+
+    req = ProcurementRequest.query.get(
+        root_query.request_id
+    )
+
+    if not req:
+
+        flash(
+            "Associated procurement request was not found.",
+            "danger",
+        )
+
+        return redirect(
+            url_for("approval_dashboard")
+        )
+
+    if approver_email not in get_assigned_approvers(
+        req
+    ):
+
+        flash(
+            "You are not assigned to this request.",
+            "danger",
+        )
+
+        return redirect(
+            url_for("approval_dashboard")
+        )
+
+    if normalize_email(
+        root_query.sender_email
+    ) != approver_email:
+
+        flash(
+            "Only the approver who raised this query "
+            "can send a follow-up message.",
+            "danger",
+        )
+
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    if root_query.status != "RESPONDED":
+
+        flash(
+            "A follow-up message can only be sent after "
+            "the recipient has responded to this query.",
+            "warning",
+        )
+
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    followup_text = (
+        request.form.get(
+            "query_comment",
+            "",
+        )
+        .strip()
+    )
+
+    if not followup_text:
+
+        followup_text = (
+            request.form.get(
+                "response",
+                "",
+            )
+            .strip()
+        )
+
+    if not followup_text:
+
+        flash(
+            "Please enter a message before submitting.",
+            "warning",
+        )
+
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    recipient_email = normalize_email(
+        root_query.recipient_email
+    )
+
+    recipient_name = root_query.recipient_name
+
+    followup = QueryMessage(
+        request_id=req.id,
+        sender_email=approver_email,
+        sender_name=approver_name,
+        recipient_type="INDIVIDUAL",
+        recipient_email=recipient_email,
+        recipient_name=recipient_name,
+        message=followup_text,
+        status="OPEN",
+        reply_to_id=root_query.id,
+        created_at=datetime.utcnow(),
+    )
+
+    # Reopen the thread so the recipient sees it and can
+    # respond again; this is what makes the status change
+    # visible on both the approver's and recipient's views.
+
+    root_query.status = "OPEN"
+
+    req.status = "QUERY"
+
+    try:
+
+        db.session.add(
+            followup
+        )
+
+        db.session.commit()
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print(
+            "QUERY FOLLOWUP DATABASE ERROR:",
+            e,
+        )
+
+        flash(
+            "There was an error while sending the "
+            "follow-up message.",
+            "danger",
+        )
+
+        return redirect(
+            url_for(
+                "request_history",
+                request_number=req.request_number,
+            )
+        )
+
+    update_mis(
+        req
+    )
+
+    send_query_email(
+        req,
+        [recipient_email],
+        approver_name,
+        followup_text,
+    )
+
+    flash(
+        f"Follow-up message sent for {req.request_number}.",
+        "success",
+    )
+
+    return redirect(
+        url_for(
+            "request_history",
+            request_number=req.request_number,
+        )
+    )
 
 
 # =========================================================
