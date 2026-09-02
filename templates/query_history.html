@@ -1708,7 +1708,7 @@
 
 
                         <!-- =================================================
-                             REQUESTER RESPONSE SECTION
+                             REQUESTER / RECIPIENT RESPONSE SECTION
                              ================================================= -->
 
                         {% if
@@ -1761,7 +1761,7 @@
 
 
                         <!-- =================================================
-                             APPROVER RESPONSE SECTION
+                             APPROVER FOLLOW-UP + CLOSE SECTION
                              ================================================= -->
 
                         {% if
@@ -1784,30 +1784,33 @@
                                 </div>
 
 
+                                <!--
+                                    NOTE: this now posts to the dedicated
+                                    query_followup route, which appends the
+                                    message to THIS thread and reopens it
+                                    for another reply. It previously posted
+                                    to query_request, which only accepts
+                                    requests in "SUBMITTED" status - since
+                                    the request is always "QUERY" status at
+                                    this point, that submission always
+                                    failed silently.
+                                -->
+
                                 <form
                                     method="POST"
                                     action="{{
                                         url_for(
-                                            'query_request',
-                                            request_number=req.request_number
+                                            'query_followup',
+                                            query_id=root.id
                                         )
                                     }}"
                                     class="response-form"
                                 >
 
-                                    <!-- Keep the existing participant
-                                         as the query recipient -->
-
-                                    <input
-                                        type="hidden"
-                                        name="query_target"
-                                        value="{{ root.recipient_email }}"
-                                    >
-
-
                                     <textarea
                                         name="query_comment"
                                         placeholder="Enter another response or clarification..."
+                                        required
                                     ></textarea>
 
 
